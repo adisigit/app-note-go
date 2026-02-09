@@ -1,0 +1,50 @@
+definitions:
+  dto.LoginUserRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.RegisterUserRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /ping:
+    get:
+      responses: {}
+      tags:
+      - Ping
+  /users/login:
+    post:
+      parameters:
+      - description: Login payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginUserRequest'
+      responses: {}
+      tags:
+      - Users
+  /users/register:
+    post:
+      parameters:
+      - description: Register payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RegisterUserRequest'
+      responses: {}
+      tags:
+      - Users
+swagger: "2.0"
