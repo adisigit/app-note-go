@@ -1,0 +1,18 @@
+networks:
+  postgres_network:
+    external: true
+
+services:
+  app:
+    container_name: note-go
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    environment:
+      - APP_ENV=production
+    networks:
+      - postgres_network

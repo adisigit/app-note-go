@@ -5,6 +5,7 @@ import (
 	_ "app-note-go/docs"
 	"app-note-go/initializer"
 	"app-note-go/middleware"
+	"app-note-go/migration"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -20,6 +21,8 @@ func init() {
 // @in header
 // @name Authorization
 func main() {
+	migration.Migrate()
+
 	router := gin.Default()
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
