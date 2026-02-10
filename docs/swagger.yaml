@@ -21,6 +21,8 @@ paths:
   /ping:
     get:
       responses: {}
+      security:
+      - ApiKeyAuth: []
       tags:
       - Ping
   /users/login:
@@ -47,4 +49,9 @@ paths:
       responses: {}
       tags:
       - Users
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

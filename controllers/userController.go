@@ -4,13 +4,17 @@ import (
 	"app-note-go/dto"
 	"app-note-go/initializer"
 	"app-note-go/models"
+	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
 // @Tags Ping
 // @Router /ping [get]
+// @Security ApiKeyAuth
 func Ping(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "pong",
@@ -67,8 +71,24 @@ func LoginUser(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, gin.H{
-		"message":  "Login successful",
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":       user.ID,
 		"username": user.Username,
+		"email":    user.Email,
+		"exp":      time.Now().Add(time.Hour * 1).Unix(),
+	})
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+
+	if err != nil {
+		c.JSON(500, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "Login successful",
+		"token":   tokenString,
 	})
 }
