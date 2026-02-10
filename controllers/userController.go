@@ -4,18 +4,13 @@ import (
 	"app-note-go/dto"
 	"app-note-go/initializer"
 	"app-note-go/models"
+	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
-
-// @Tags Ping
-// @Router /ping [get]
-func Ping(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "pong",
-	})
-}
 
 // @Tags Users
 // @Param body body dto.RegisterUserRequest true "Register payload"
@@ -23,7 +18,7 @@ func Ping(c *gin.Context) {
 func CreateUser(c *gin.Context) {
 	var body dto.RegisterUserRequest
 	if err := c.ShouldBindJSON(&body); err != nil {
-		c.JSON(400, gin.H{
+		c.AbortWithStatusJSON(400, gin.H{
 			"error": err.Error(),
 		})
 		return
@@ -32,12 +27,12 @@ func CreateUser(c *gin.Context) {
 
 	result := initializer.DB.Create(&user)
 	if result.Error != nil {
-		c.JSON(500, gin.H{
+		c.AbortWithStatusJSON(500, gin.H{
 			"error": result.Error.Error(),
 		})
 		return
 	}
-	c.JSON(200, gin.H{
+	c.AbortWithStatusJSON(200, gin.H{
 		"message": "User created successfully",
 	})
 }
@@ -48,7 +43,7 @@ func CreateUser(c *gin.Context) {
 func LoginUser(c *gin.Context) {
 	var body dto.LoginUserRequest
 	if err := c.ShouldBindJSON(&body); err != nil {
-		c.JSON(400, gin.H{
+		c.AbortWithStatusJSON(400, gin.H{
 			"error": err.Error(),
 		})
 		return
@@ -56,19 +51,35 @@ func LoginUser(c *gin.Context) {
 	user := models.User{Email: body.Email}
 	result := initializer.DB.Where("email = ?", body.Email).First(&user)
 	if result.Error != nil {
-		c.JSON(400, gin.H{
+		c.AbortWithStatusJSON(400, gin.H{
 			"error": "Invalid email or password",
 		})
 		return
 	}
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
-		c.JSON(400, gin.H{
+		c.AbortWithStatusJSON(400, gin.H{
 			"error": "Invalid email or password",
 		})
 		return
 	}
-	c.JSON(200, gin.H{
-		"message":  "Login successful",
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":       user.ID,
 		"username": user.Username,
+		"email":    user.Email,
+		"exp":      time.Now().Add(time.Hour * 1).Unix(),
+	})
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.AbortWithStatusJSON(200, gin.H{
+		"message": "Login successful",
+		"token":   tokenString,
 	})
 }
