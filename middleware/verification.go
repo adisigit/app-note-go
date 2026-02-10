@@ -27,7 +27,8 @@ func VerifyToken(c *gin.Context) {
 		c.AbortWithStatusJSON(401, gin.H{"error": "Unauthorized"})
 		return
 	}
-	if parsedToken.Valid {
+	if claims, ok := parsedToken.Claims.(jwt.MapClaims); ok && parsedToken.Valid {
+		c.Set("userID", claims["id"].(string))
 		c.Next()
 	} else {
 		c.AbortWithStatusJSON(401, gin.H{"error": "Unauthorized"})

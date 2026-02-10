@@ -15,7 +15,53 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/ping": {
+        "/notes/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "Notes"
+                ],
+                "parameters": [
+                    {
+                        "description": "Create note payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.NoteCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/notes/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "Notes"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Note ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/notes/pagination": {
             "get": {
                 "security": [
                     {
@@ -23,7 +69,62 @@ const docTemplate = `{
                     }
                 ],
                 "tags": [
-                    "Ping"
+                    "Notes"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/notes/update": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "Notes"
+                ],
+                "parameters": [
+                    {
+                        "description": "Update note payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.NoteUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/notes/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "Notes"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Note ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
                 ],
                 "responses": {}
             }
@@ -75,6 +176,31 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.NoteCreateRequest": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.NoteUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string"
                 }
             }

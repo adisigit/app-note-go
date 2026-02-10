@@ -6,6 +6,22 @@ definitions:
       password:
         type: string
     type: object
+  dto.NoteCreateRequest:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    type: object
+  dto.NoteUpdateRequest:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
   dto.RegisterUserRequest:
     properties:
       email:
@@ -18,13 +34,73 @@ definitions:
 info:
   contact: {}
 paths:
-  /ping:
+  /notes/{id}:
     get:
+      parameters:
+      - description: Note ID
+        in: path
+        name: id
+        required: true
+        type: string
       responses: {}
       security:
       - ApiKeyAuth: []
       tags:
-      - Ping
+      - Notes
+  /notes/create:
+    post:
+      parameters:
+      - description: Create note payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NoteCreateRequest'
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Notes
+  /notes/delete/{id}:
+    delete:
+      parameters:
+      - description: Note ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Notes
+  /notes/pagination:
+    get:
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        required: true
+        type: integer
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Notes
+  /notes/update:
+    put:
+      parameters:
+      - description: Update note payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NoteUpdateRequest'
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Notes
   /users/login:
     post:
       parameters:

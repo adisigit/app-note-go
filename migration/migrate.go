@@ -21,4 +21,9 @@ func main() {
 		ALTER TABLE users
 		ALTER COLUMN id SET DEFAULT gen_random_uuid();
 	`)
+
+	db.Exec(`
+		ALTER TABLE notes
+		ALTER COLUMN id SET DEFAULT gen_random_uuid();
+	`)
 }
