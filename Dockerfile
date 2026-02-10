@@ -8,15 +8,6 @@ RUN go mod download && go mod verify
 
 COPY . .
 
-RUN go build -o app-note-go main.go
+RUN go build -o note-go main.go
 
-FROM alpine:latest
-
-WORKDIR /app
-
-COPY --from=builder /app/app-note-go .
-COPY --from=builder /app/migration ./migration
-
-EXPOSE 3000
-
-CMD ["./app-note-go"]
+CMD ["./note-go"]
